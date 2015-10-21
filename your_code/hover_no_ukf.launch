@@ -1,0 +1,33 @@
+<launch>
+    <node pkg="mavlink_message" type="mavlink_message" name="mavlink" output="screen">
+    </node>
+
+    <node pkg="pos_cmd_generator" type="pos_cmd_generator" name="pos_cmd_generator" output="screen">
+        <rosparam file="$(find pos_cmd_generator)/config/set_pos_param.yaml"/>
+        <remap from="~odom" to="/mocap/odom"/>
+    </node>
+
+    <node pkg="so3_controller" type="so3_control" name="so3_control" output="screen">
+        <remap from="~odom" to="/mocap/odom"/>
+        <remap from="~des_pos" to="/pos_cmd_generator/des_pos"/>
+        <remap from="~q_pixhawk" to="/mavlink/att_onboard"/>
+        <param name="Px" type="double" value="5.0"/>
+        <param name="Py" type="double" value="5.0"/>
+        <param name="Pz" type="double" value="5.0"/>
+        <param name="Dx" type="double" value="1.0"/>
+        <param name="Dy" type="double" value="1.0"/>
+        <param name="Dz" type="double" value="1.0"/>
+        <param name="Mass" type="double" value="1.2"/>
+        <param name="ThrustGain" type="double" value="36.0"/>
+    </node>
+
+    <node pkg="pos_vel_mocap" type="pos_vel_mocap" name="mocap" output="screen">
+        <remap from="~pose" to="/Robot_1/pose"/>
+    </node>
+
+    <node pkg="mocap_optitrack" type="mocap_node" name="mocap_node"
+        respawn="false" launch-prefix="" required="true">
+        <rosparam file="$(find mocap_optitrack)/config/mocap.yaml" command="load" />
+    </node>
+
+</launch>
