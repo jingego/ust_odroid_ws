@@ -10,6 +10,11 @@ using namespace Eigen;
  */
 bool trajectory_generator(Vector3d init_pos, Vector3d init_vel)
 {
+    double v_abs[3], des_pos[3];
+    v_abs={0.1,0,0};
+   	des_pos[0]=init_pos[0]+v_abs[0]*dT;/*how to dT?*/
+	des_pos[1]=init_pos[1]+v_abs[1]*dT;
+	des_pos[2]=init_pos[2]+v_abs[2]*dT;
     return true;
 }
 /*
