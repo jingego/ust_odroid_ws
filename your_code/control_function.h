@@ -37,7 +37,7 @@ void SO3Control_function( const Eigen::Vector3d des_pos,
         double &target_thrust
         )
 {
-
+	int a, b,c;
 }
 
 #endif
