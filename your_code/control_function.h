@@ -1,43 +1,51 @@
 #ifndef control_funtion_h
 #define control_funtion_h
 
-using namespace Eigen;
+#include <math.h>
 /*please fill this controller function
- * input: 
+ * input:
  * des_pos -> desired position
  * des_vel -> desired velocity
  * des_acc -> desired acceleration
- * des_yaw -> desired yaw angle of the offboard frame
- * R_ukf   -> the body attitude in the offboard frame
- * R_px4   -> the body attitude in the onboard frame
- * now_pos -> body position, of course, in the offboard frame
- * now_vel -> body velocity in the offboard frame
+ * des_yaw -> desired yaw angle
+ * now_pos -> now psition
+ * now_vel -> body velocity
  * Kp      -> P gain for position loop
  * Kd      -> P gain for velocity loop
  * Mass    -> quality of the quadrotor
- * ThrustGain -> the coeffient that tranfers force (Unit: N) to target thrust (Range: 0 - 1)
  *
+ 
  * output:
- * target_quaternion -> target attitude for autopilot (pixhawk), of course, in the onboard frame
- * target_thrust     -> target thrust of the quadrotor, Range: 0.0 - 1.0
+ * rpy -> target attitude for autopilot
+ * target_thrust     -> target thrust of the quadrotor
  * */
-void SO3Control_function( const Eigen::Vector3d des_pos,
-        const Eigen::Vector3d des_vel,
-        const Eigen::Vector3d des_acc,
-        double des_yaw,
-        const Eigen::Matrix3d R_ukf,
-        const Eigen::Matrix3d R_px4,
-        const Eigen::Vector3d now_pos,
-        const Eigen::Vector3d now_vel,
-        const Eigen::Vector3d Kp,
-        const Eigen::Vector3d Kd,
-        const double Mass,
-        const double ThrustGain,
-        Eigen::Quaterniond &target_quaternion,
-        double &target_thrust
-        )
+void SO3Control_function( const double des_pos[3],
+                          const double des_vel[3],
+                          const double des_acc[3],
+                          const double des_yaw,
+                          const double now_pos[3],
+                          const double now_vel[3],
+                          const double now_yaw,
+                          const double Kp[3],
+                          const double Kd[3],
+                          const double Mass,
+                          const double Gravity,
+                          double rpy[3],
+                          double &target_thrust
+                        )
 {
+    double err_pos[3], err_vel[3], rc2dot[3], F;
+    //get the desired acceleration
+    for (int i = 0; i < 3; ++i)
+    {
+       err_pos[i] = des_pos[i] - now_pos[i];
+       err_vel[i] = des_vel[i] - now_vel[i];
+       rc2dot[i] = Kp[i] * err_pos[i] + Kd[i] * err_vel[i];
+    }
 
+    target_thrust = Mass * (Gravity + rc2dot[2]);
+    rpy[0] = (rc2dot[0]*sin(now_yaw)-rc2dot[1]*cos(now_yaw))/Gravity;
+    rpy[1] = (rc2dot[0]*cos(now_yaw)+rc2dot[1]*sin(now_yaw))/Gravity;
+    rpy[2] = des_yaw;    //des_yaw  
 }
-
 #endif
