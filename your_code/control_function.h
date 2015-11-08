@@ -34,6 +34,7 @@ void SO3Control_function( const double des_pos[3],
                           double &target_thrust
                         )
 {
+<<<<<<< HEAD
     double err_pos[3], err_vel[3], rc2dot[3], F;
     //get the desired acceleration
     for (int i = 0; i < 3; ++i)
@@ -47,5 +48,8 @@ void SO3Control_function( const double des_pos[3],
     rpy[0] = (rc2dot[0]*sin(now_yaw)-rc2dot[1]*cos(now_yaw))/Gravity;
     rpy[1] = (rc2dot[0]*cos(now_yaw)+rc2dot[1]*sin(now_yaw))/Gravity;
     rpy[2] = des_yaw;    //des_yaw  
+=======
+	
+>>>>>>> c3a1f09c21b9c6800015c59e084ed2f3b93c905f
 }
 #endif
